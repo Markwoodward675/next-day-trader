@@ -1,23 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
   const [status, setStatus] = useState("Verifying your email...");
   const [subStatus, setSubStatus] = useState("");
 
   useEffect(() => {
-    const userId = searchParams.get("userId");
-    const secret = searchParams.get("secret");
+    if (typeof window === "undefined") return;
+
+    const url = new URL(window.location.href);
+    const userId = url.searchParams.get("userId");
+    const secret = url.searchParams.get("secret");
 
     if (!userId || !secret) {
       setStatus("Invalid verification link");
-      setSubStatus("The link is missing verification parameters. Try requesting a new email.");
+      setSubStatus(
+        "The link is missing verification parameters. Try requesting a new verification email."
+      );
       return;
     }
 
@@ -39,7 +42,7 @@ export default function VerifyEmailPage() {
         );
       }
     })();
-  }, [router, searchParams]);
+  }, [router]);
 
   return (
     <main
@@ -55,7 +58,7 @@ export default function VerifyEmailPage() {
         style={{
           maxWidth: 420,
           width: "100%",
-          background: "#0b0b15",
+          background: "#050816",
           borderRadius: 12,
           padding: "1.5rem 1.75rem",
           border: "1px solid #1f2937",
